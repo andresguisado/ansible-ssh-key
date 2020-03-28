@@ -1,0 +1,40 @@
+---
+- hosts: localhost
+  vars:
+    username_value: "{{ lookup('conjur_variable', 'dev/secrets/targetuser') }}"
+    key_value: "{{ lookup('conjur_variable', 'dev/secrets/targetsshkey') }}"
+
+  tasks:
+    - name: Initiate TempFile Module for SSH Private Key
+      tempfile:
+        state: file
+        suffix: key
+      register: temp_key
+      no_log: yes
+
+    - name: Write SSH Private Key to TempFile
+      copy:
+        dest: "{{ temp_key.path }}"
+        content: "{{ key_value }}"
+      delegate_to: localhost
+      changed_when: false
+      no_log: yes
+
+    - name: Set Username and SSH Private Key TempFile to a Fact
+      set_fact:
+        cyberark_username: "{{ username_value }}"
+        cyberark_ssh_privatekey: "{{ temp_key.path }}"
+      no_log: yes
+
+- hosts: targets
+  gather_facts: yes
+  vars:
+    ansible_user: "{{ hostvars['localhost']['cyberark_username'] }}"
+    ansible_ssh_private_key_file: "{{ hostvars['localhost']['cyberark_ssh_privatekey'] }}"
+
+  tasks:
+    - name: Verify the filesystems
+      command: df -h
+      register: df
+    - name: print df output in json
+      debug: var=df.stdout_lines
