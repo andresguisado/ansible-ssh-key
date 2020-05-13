@@ -1,8 +1,8 @@
 ---
 - hosts: localhost
   vars:
-    username_value: "{{ lookup('conjur_variable', 'dev/secrets/targetuser') }}"
-    key_value: "{{ lookup('conjur_variable', 'dev/secrets/targetsshkey') }}"
+    username_value: "{{ lookup('cyberark.conjur_collection.conjur_variable', 'dev/secrets/targetuser') }}"
+    key_value: "{{ lookup('cyberark.conjur_collection.conjur_variable', 'dev/secrets/targetsshkey') }}"
 
   tasks:
     - name: Initiate TempFile Module for SSH Private Key
