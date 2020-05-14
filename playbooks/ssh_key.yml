@@ -24,7 +24,7 @@
       set_fact:
         cyberark_username: "{{ username_value }}"
         cyberark_ssh_privatekey: "{{ temp_key.path }}"
-      no_log: yes
+      #no_log: yes
 
 - hosts: targets
   gather_facts: yes
