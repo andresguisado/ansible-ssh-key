@@ -18,7 +18,7 @@
         content: "{{ key_value }}"
       delegate_to: localhost
       changed_when: false
-      no_log: yes
+      #no_log: yes
 
     - name: Set Username and SSH Private Key TempFile to a Fact
       set_fact:
